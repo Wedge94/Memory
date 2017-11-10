@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity
                 if(number >= minPhotos && number <= maxPhotos)
                 {
                     dispatchTakePictureIntent();
-                    //toastMessage(mCurrentPhotoPath);
+
                 }
                 else
                 {
@@ -127,6 +127,14 @@ public class MainActivity extends AppCompatActivity
 
         // Save a file: path for use with ACTION_VIEW intents
         mCurrentPhotoPath = image.getAbsolutePath();
+        toastMessage(mCurrentPhotoPath);
+        toastMessage(mCurrentPhotoPath);
+        toastMessage(mCurrentPhotoPath);
+        toastMessage(mCurrentPhotoPath);
+        toastMessage(mCurrentPhotoPath);
+        toastMessage(mCurrentPhotoPath);
+        toastMessage(mCurrentPhotoPath);
+        toastMessage(mCurrentPhotoPath);
         return image;
     }
 
