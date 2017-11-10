@@ -16,7 +16,6 @@ import java.util.List;
 
 public class FeedReaderDbHelper extends SQLiteOpenHelper
 {
-
     public static class FeedEntry implements BaseColumns
     {
         public static final String TABLE_NAME = "entry";
@@ -32,39 +31,36 @@ public class FeedReaderDbHelper extends SQLiteOpenHelper
             "DROP TABLE IF EXISTS " + FeedEntry.TABLE_NAME;
 
     public static final int DATABASE_VERSION = 1;
+
     public static final String DATABASE_NAME = "FeedReader.db";
 
-    public FeedReaderDbHelper(Context context) {
+    public FeedReaderDbHelper(Context context)
+    {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
-    public void onCreate(SQLiteDatabase db) {
+
+    public void onCreate(SQLiteDatabase db)
+    {
         db.execSQL(SQL_CREATE_ENTRIES);
     }
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // This database is only a cache for online data, so its upgrade policy is
-        // to simply to discard the data and start over
+
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion)
+    {
         db.execSQL(SQL_DELETE_ENTRIES);
         onCreate(db);
     }
-    /*public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        onUpgrade(db, oldVersion, newVersion);
-    }*/
 
 
     public void addData(String number)
     {
-        // Gets the data repository in write mode
         SQLiteDatabase db = this.getWritableDatabase();
-
-// Create a new map of values, where column names are the keys
         ContentValues values = new ContentValues();
         values.put(FeedEntry.COLUMN_NAME_NUMBER, number);
-
-// Insert the new row, returning the primary key value of the new row
         long newRowId = db.insert(FeedEntry.TABLE_NAME, null, values);
     }
 
-    public List getData(){
+    public List getData()
+    {
         SQLiteDatabase db = this.getWritableDatabase();
         String query = "SELECT * FROM " + FeedEntry.TABLE_NAME;
         Cursor data = db.rawQuery(query, null);
@@ -77,6 +73,4 @@ public class FeedReaderDbHelper extends SQLiteOpenHelper
         data.close();
         return itemIds;
     }
-
-
 }
