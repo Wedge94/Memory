@@ -103,7 +103,7 @@ public class MainActivity extends AppCompatActivity
         imageView.setMaxHeight(20);
         imageView.setMaxWidth(20);
         LinearLayout myLayout = (LinearLayout) findViewById(R.id.layoutForThings);
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(20,20);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(50,50);
         myLayout.addView(imageView, lp);
         return imageView;
     }
@@ -188,7 +188,8 @@ public class MainActivity extends AppCompatActivity
     {
         numberOfPhotos.setVisibility(View.GONE);
         List photosPaths = mReaderDbHelper.getData();
-        toastMessage(Integer.toString(photosPaths.size()));
+        toastMessage("Rozmiar bazy danych: " + Integer.toString(photosPaths.size()));
+        toastMessage("Wybrana ilosc zdjec: " + Integer.toString(photosNumber));
         for(int i = 0; i < photosNumber; i++)
         {
             createImageView(photosPaths.get(i).toString());

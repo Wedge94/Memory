@@ -68,12 +68,9 @@ public class FeedReaderDbHelper extends SQLiteOpenHelper
         List itemIds = new ArrayList();
         while(data.moveToNext())
         {
-            for(int i = 0; i < FeedEntry.COLUMNS_NUMBER; i++)
-            {
-                String itemId = data.getString(
-                        data.getColumnIndexOrThrow(FeedEntry.COLUMN_NAME_PATHS));
-                itemIds.add(itemId);
-            }
+            String itemId = data.getString(
+                    data.getColumnIndexOrThrow(FeedEntry.COLUMN_NAME_PATHS));
+            itemIds.add(itemId);
         }
         data.close();
         return itemIds;
