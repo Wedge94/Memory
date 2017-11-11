@@ -18,14 +18,15 @@ public class FeedReaderDbHelper extends SQLiteOpenHelper
 {
     public static class FeedEntry implements BaseColumns
     {
-        public static final String TABLE_NAME = "entry";
-        public static final String COLUMN_NAME_NUMBER = "number";
+        public static final int COLUMNS_NUMBER = 2;
+        public static final String TABLE_NAME = "paths_table";
+        public static final String COLUMN_NAME_PATHS = "paths";
     }
 
     private static final String SQL_CREATE_ENTRIES =
             "CREATE TABLE " + FeedEntry.TABLE_NAME + " (" +
                     FeedEntry._ID + " INTEGER PRIMARY KEY," +
-                    FeedEntry.COLUMN_NAME_NUMBER + " TEXT)";
+                    FeedEntry.COLUMN_NAME_PATHS + " TEXT)";
 
     private static final String SQL_DELETE_ENTRIES =
             "DROP TABLE IF EXISTS " + FeedEntry.TABLE_NAME;
@@ -51,11 +52,11 @@ public class FeedReaderDbHelper extends SQLiteOpenHelper
     }
 
 
-    public void addData(String number)
+    public void insertData(String value)
     {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put(FeedEntry.COLUMN_NAME_NUMBER, number);
+        values.put(FeedEntry.COLUMN_NAME_PATHS, value);
         long newRowId = db.insert(FeedEntry.TABLE_NAME, null, values);
     }
 
@@ -64,11 +65,15 @@ public class FeedReaderDbHelper extends SQLiteOpenHelper
         SQLiteDatabase db = this.getWritableDatabase();
         String query = "SELECT * FROM " + FeedEntry.TABLE_NAME;
         Cursor data = db.rawQuery(query, null);
-        List itemIds = new ArrayList<>();
-        while(data.moveToNext()) {
-            long itemId = data.getLong(
-                    data.getColumnIndexOrThrow(FeedEntry.COLUMN_NAME_NUMBER));
-            itemIds.add(itemId);
+        List itemIds = new ArrayList();
+        while(data.moveToNext())
+        {
+            for(int i = 0; i < FeedEntry.COLUMNS_NUMBER; i++)
+            {
+                String itemId = data.getString(
+                        data.getColumnIndexOrThrow(FeedEntry.COLUMN_NAME_PATHS));
+                itemIds.add(itemId);
+            }
         }
         data.close();
         return itemIds;
