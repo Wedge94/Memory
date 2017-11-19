@@ -28,12 +28,10 @@ public class MemoryActivity extends AppCompatActivity
         toastMessage(Integer.toString(numberOfPhotos));
         for(int i = 0; i < numberOfPhotos; i++)
         {
-            int index = 0;
             TableRow tableRow = createTableRow(myLayout);
             for(int j = 0; j < 4; j++)
             {
-                createImageView(mReaderDbHelper.getData().get(index).toString(), tableRow);
-                index++;
+                createImageView(mReaderDbHelper.getData().get(j).toString(), tableRow);
             }
         }
     }
@@ -53,7 +51,11 @@ public class MemoryActivity extends AppCompatActivity
     {
         ImageView imageView = new ImageView(this);
         imageView.setImageURI(Uri.parse(uriPath));
-        tableRow.addView(imageView);
+        TableRow.LayoutParams lp = new TableRow.LayoutParams(
+                TableRow.LayoutParams.MATCH_PARENT,
+                TableRow.LayoutParams.MATCH_PARENT);
+        lp.weight = 1;
+        tableRow.addView(imageView, lp);
         return imageView;
     }
 
