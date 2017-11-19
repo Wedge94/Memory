@@ -1,21 +1,17 @@
 package com.memory.dominik.benduski.memory;
 
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,13 +19,11 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity
 {
-    private EditText numberOfPhotos;
-    private static final int minPhotos = 4;
-    private static final int maxPhotos = 10;
+    private static final int MIN_PHOTOS = 4;
+    private static final int MAX_PHOTOS = 10;
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private static final int REQUEST_TAKE_PHOTO = 1;
     private static int photosNumber;
@@ -46,14 +40,14 @@ public class MainActivity extends AppCompatActivity
         {
             public void onClick(View v)
             {
-                numberOfPhotos = createEditTextView("Ilosc zdjec (min. " + minPhotos + " max. " + maxPhotos + "): ");
+                EditText numberOfPhotos = createEditTextView("Ilosc zdjec (min. " + MIN_PHOTOS + " max. " + MAX_PHOTOS + "): ");
                 newGameButton.setVisibility(View.GONE);
-                commitOnEditorActionListener();
+                commitOnEditorActionListener(numberOfPhotos);
             }
         });
     }
 
-    private void commitOnEditorActionListener()
+    private void commitOnEditorActionListener(EditText numberOfPhotos)
     {
         numberOfPhotos.setOnEditorActionListener(new TextView.OnEditorActionListener()
         {
@@ -61,7 +55,7 @@ public class MainActivity extends AppCompatActivity
             {
                 photosNumber = Integer.parseInt(textView.getText().toString());
                 photosTaked = mReaderDbHelper.getData().size();
-                if(photosNumber >= minPhotos && photosNumber <= maxPhotos)
+                if(photosNumber >= MIN_PHOTOS && photosNumber <= MAX_PHOTOS)
                 {
                     if(photosNumber <= photosTaked)
                     {
@@ -77,7 +71,7 @@ public class MainActivity extends AppCompatActivity
                 }
                 else
                 {
-                    toastMessage("Ilosc zdjec musi byc pomiedzy " + minPhotos + ", a " + maxPhotos + "!");
+                    toastMessage("Ilosc zdjec musi byc pomiedzy " + MIN_PHOTOS + ", a " + MAX_PHOTOS + "!");
                 }
                 return false;
             }
@@ -91,21 +85,11 @@ public class MainActivity extends AppCompatActivity
         editText.setHint(text);
         editText.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
         LinearLayout myLayout = (LinearLayout)findViewById(R.id.layoutForThings);
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT);
         myLayout.addView(editText, lp);
         return editText;
-    }
-
-    private ImageView createImageView(String uriPath)
-    {
-        ImageView imageView = new ImageView(this);
-        imageView.setImageURI(Uri.parse(uriPath));
-        imageView.setMaxHeight(20);
-        imageView.setMaxWidth(20);
-        LinearLayout myLayout = (LinearLayout) findViewById(R.id.layoutForThings);
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(50,50);
-        myLayout.addView(imageView, lp);
-        return imageView;
     }
 
     private void toastMessage(String message)
@@ -141,7 +125,8 @@ public class MainActivity extends AppCompatActivity
 
     private File createImageFile() throws IOException {
         // Create an image file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String timeStamp =
+                new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
         File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         File image = File.createTempFile(
@@ -186,13 +171,8 @@ public class MainActivity extends AppCompatActivity
 
     private void startGame()
     {
-        numberOfPhotos.setVisibility(View.GONE);
-        List photosPaths = mReaderDbHelper.getData();
-        toastMessage("Rozmiar bazy danych: " + Integer.toString(photosPaths.size()));
-        toastMessage("Wybrana ilosc zdjec: " + Integer.toString(photosNumber));
-        for(int i = 0; i < photosNumber; i++)
-        {
-            createImageView(photosPaths.get(i).toString());
-        }
+        Intent intent = new Intent(this, MemoryActivity.class);
+        intent.putExtra("number", photosNumber);
+        startActivity(intent);
     }
 }
