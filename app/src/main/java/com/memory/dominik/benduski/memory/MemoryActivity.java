@@ -27,7 +27,7 @@ public class MemoryActivity extends AppCompatActivity
     private Map<String,Integer> mapOfImage;
     private int score;
     private TextView scoreView;
-    private final int TIME = 2000;
+    private final int TIME = 500;
 
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -84,82 +84,74 @@ public class MemoryActivity extends AppCompatActivity
     private void playInMemory(ImageView imageView, String uriPath)
     {
         final MemoryImageView miv = new MemoryImageView(imageView, uriPath, mapOfImage.get(uriPath));
+        miv.setOnClickProgress(true);
+        miv.setClick(false);
+        miv.setMiv(null);
         imageView.setOnClickListener(new View.OnClickListener()
         {
             public void onClick(View v)
             {
-                if(miv.getClick())
+                if(miv.getOnClickProgress())
                 {
-                    toastMessage("Drugi click");
-                    if(miv == miv.getMiv())
+                    if(miv.getClick())
                     {
-                        toastMessage("ten sam");
-                    }
-                    else
-                    {
-                        if(miv.getId() == miv.getMiv().getId())
+                        miv.setOnClickProgress(false);
+                        if(miv == miv.getMiv())
                         {
-                            stopOnClick();
-                            miv.setOnImage();
-                            Runnable mMyRunnable = new Runnable()
-                            {
-                                @Override
-                                public void run()
-                                {
-                                    score += 2;
-                                    scoreView.setText("Score: " + Integer.toString(score));
-                                    miv.setInvisible();
-                                    miv.getMiv().setInvisible();
-                                    miv.setClick(false);
-                                    startOnClick();
-                                }
-                            };
-                            Handler myHandler = new Handler();
-                            myHandler.postDelayed(mMyRunnable, TIME);
-
+                            miv.setOnClickProgress(true);
                         }
                         else
                         {
-
-                            miv.setOnImage();
-                            Runnable mMyRunnable = new Runnable()
+                            if(miv.getId() == miv.getMiv().getId())
                             {
-                                @Override
-                                public void run()
+                                miv.setOnImage();
+                                Runnable mMyRunnable = new Runnable()
                                 {
-                                    score--;
-                                    scoreView.setText("Score: " + Integer.toString(score));
-                                    miv.setOnMark();
-                                    miv.getMiv().setOnMark();
-                                    miv.setClick(false);
-                                    startOnClick();
-                                }
-                            };
-                            Handler myHandler = new Handler();
-                            myHandler.postDelayed(mMyRunnable, TIME);
+                                    @Override
+                                    public void run()
+                                    {
+                                        score += 2;
+                                        scoreView.setText("Score: " + Integer.toString(score));
+                                        miv.setInvisible();
+                                        miv.getMiv().setInvisible();
+                                        miv.setClick(false);
+                                        miv.setOnClickProgress(true);
+                                    }
+                                };
+                                Handler myHandler = new Handler();
+                                myHandler.postDelayed(mMyRunnable, TIME);
+
+                            }
+                            else
+                            {
+                                miv.setOnImage();
+                                Runnable mMyRunnable = new Runnable()
+                                {
+                                    @Override
+                                    public void run()
+                                    {
+                                        score--;
+                                        scoreView.setText("Score: " + Integer.toString(score));
+                                        miv.setOnMark();
+                                        miv.getMiv().setOnMark();
+                                        miv.setClick(false);
+                                        miv.setOnClickProgress(true);
+                                    }
+                                };
+                                Handler myHandler = new Handler();
+                                myHandler.postDelayed(mMyRunnable, TIME);
+                            }
                         }
                     }
-                }
-                else
-                {
-                    toastMessage("Pierwszy click");
-                    miv.setClick(true);
-                    miv.setMiv(miv);
-                    miv.setOnImage();
+                    else
+                    {
+                        miv.setClick(true);
+                        miv.setMiv(miv);
+                        miv.setOnImage();
+                    }
                 }
             }
         });
-    }
-
-    private void stopOnClick()
-    {
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
-                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-    }
-
-    private void startOnClick()
-    {
-        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
     }
 
     private void toastMessage(String message)

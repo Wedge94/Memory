@@ -35,6 +35,7 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         final Button newGameButton = (Button) findViewById(R.id.newGame);
+        final Button resetPhotosButton = (Button) findViewById(R.id.reset);
         mReaderDbHelper = new FeedReaderDbHelper(this);
         newGameButton.setOnClickListener(new View.OnClickListener()
         {
@@ -43,6 +44,26 @@ public class MainActivity extends AppCompatActivity
                 EditText numberOfPhotos = createEditTextView("Ilosc zdjec (min. " + MIN_PHOTOS + " max. " + MAX_PHOTOS + "): ");
                 newGameButton.setVisibility(View.GONE);
                 commitOnEditorActionListener(numberOfPhotos);
+            }
+        });
+        resetPhotosButton.setOnClickListener(new View.OnClickListener()
+        {
+            public void onClick(View v)
+            {
+                if(mReaderDbHelper.getData().size() > 0)
+                {
+                    for(int i = 0; i < mReaderDbHelper.getData().size(); i++)
+                    {
+                        File file = new File(mReaderDbHelper.getData().get(i).toString());
+                        file.delete();
+                    }
+                    mReaderDbHelper.deleteData();
+                    toastMessage("Usunieto zdjecia i baze danych!");
+                }
+                else
+                {
+                    toastMessage("Baza danych jest pusta!");
+                }
             }
         });
     }
@@ -97,25 +118,11 @@ public class MainActivity extends AppCompatActivity
         Toast.makeText(this,message, Toast.LENGTH_SHORT).show();
     }
 
-    /*protected void onStop()
-    {
-        this.deleteDatabase(mReaderDbHelper.DATABASE_NAME);
-        super.onStop();
-    }*/
-
-    /*private void dispatchTakePictureIntent()
-    {
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (takePictureIntent.resolveActivity(getPackageManager()) != null)
-        {
-            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-        }
-    }*/
-
     protected void onActivityResult(int requestCode, int resultCode, Intent data)
     {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK)
         {
+            photosTaked++;
             if(photosNumber <= photosTaked)
             {
                 startGame();
@@ -163,7 +170,6 @@ public class MainActivity extends AppCompatActivity
                         "com.memory.dominik.benduski.memory",
                         photoFile);
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                photosTaked++;
                 startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
             }
         }

@@ -16,12 +16,21 @@ public class MemoryImageView
     private int id;
     private static boolean click = false;
     private static MemoryImageView miv;
+    private static boolean onClickProgress = true;
 
     public MemoryImageView(ImageView imageView, String urlImage, int id)
     {
         this.imageView = imageView;
         this.urlImage = urlImage;
         this.id = id;
+    }
+
+    public boolean getOnClickProgress() {
+        return onClickProgress;
+    }
+
+    public void setOnClickProgress(boolean onClickProgress) {
+        MemoryImageView.onClickProgress = onClickProgress;
     }
 
     public void setInvisible()

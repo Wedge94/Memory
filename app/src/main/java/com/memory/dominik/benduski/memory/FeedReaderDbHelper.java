@@ -60,6 +60,13 @@ public class FeedReaderDbHelper extends SQLiteOpenHelper
         long newRowId = db.insert(FeedEntry.TABLE_NAME, null, values);
     }
 
+    public void deleteData()
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("delete from " + FeedEntry.TABLE_NAME);
+        db.close();
+    }
+
     public List getData()
     {
         SQLiteDatabase db = this.getWritableDatabase();
