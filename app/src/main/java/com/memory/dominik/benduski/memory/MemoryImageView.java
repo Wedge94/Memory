@@ -8,8 +8,7 @@ import android.widget.ImageView;
  * Created by domin on 24.11.2017.
  */
 
-public class MemoryImageView
-{
+public class MemoryImageView {
     private final static int MARK = R.drawable.ic;
     private ImageView imageView;
     private String urlImage;
@@ -18,8 +17,7 @@ public class MemoryImageView
     private static MemoryImageView miv;
     private static boolean onClickProgress = true;
 
-    public MemoryImageView(ImageView imageView, String urlImage, int id)
-    {
+    public MemoryImageView(ImageView imageView, String urlImage, int id) {
         this.imageView = imageView;
         this.urlImage = urlImage;
         this.id = id;
@@ -33,8 +31,7 @@ public class MemoryImageView
         MemoryImageView.onClickProgress = onClickProgress;
     }
 
-    public void setInvisible()
-    {
+    public void setInvisible() {
         imageView.setVisibility(View.INVISIBLE);
     }
 
@@ -46,28 +43,23 @@ public class MemoryImageView
         MemoryImageView.miv = miv;
     }
 
-    public void setOnImage()
-    {
+    public void setOnImage() {
         this.imageView.setImageURI(Uri.parse(urlImage));
     }
 
-    public void setOnMark()
-    {
+    public void setOnMark() {
         this.imageView.setImageResource(MARK);
     }
 
-    public int getId()
-    {
+    public int getId() {
         return this.id;
     }
 
-    public boolean getClick()
-    {
+    public boolean getClick() {
         return click;
     }
 
-    public void setClick(boolean b)
-    {
+    public void setClick(boolean b) {
         click = b;
     }
 }
