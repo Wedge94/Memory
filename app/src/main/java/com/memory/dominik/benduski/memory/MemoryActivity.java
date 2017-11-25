@@ -1,18 +1,26 @@
 package com.memory.dominik.benduski.memory;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Random;
+import java.util.Stack;
 
 
 /**
@@ -28,6 +36,7 @@ public class MemoryActivity extends AppCompatActivity
     private int score;
     private TextView scoreView;
     private final int TIME = 500;
+    private ImageView fullSizeImage;
 
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -35,19 +44,41 @@ public class MemoryActivity extends AppCompatActivity
         setContentView(R.layout.memory_layout);
         mReaderDbHelper = new FeedReaderDbHelper(this);
         myLayout = (TableLayout) findViewById(R.id.tableLayout);
-        int numberOfPhotos = Math.round(getIntent().getIntExtra("number", -1) / 2);
+        int numberOfPhotos = getIntent().getIntExtra("number", -1) / 2;
         toastMessage(Integer.toString(numberOfPhotos));
         createMapOfImage();
         score = 0;
         scoreView = (TextView) findViewById(R.id.scoreView);
+        fullSizeImage = (ImageView) findViewById(R.id.FullScreenImage);
+        listenerForFullSizeImage();
+        List<String> randomImage = new ArrayList<>();
+        for(int i=0; i<mReaderDbHelper.getData().size(); i++)
+        {
+            randomImage.add(mReaderDbHelper.getData().get(i).toString());
+            randomImage.add(mReaderDbHelper.getData().get(i).toString());
+        }
+        Random random= new Random();
         for(int i = 0; i < numberOfPhotos; i++)
         {
             TableRow tableRow = createTableRow(myLayout);
             for(int j = 0; j < 4; j++)
             {
-                createImageView(mReaderDbHelper.getData().get(j).toString(), tableRow);
+                int temp = random.nextInt(randomImage.size());
+                createImageView(randomImage.get(temp), tableRow);
+                randomImage.remove(temp);
             }
         }
+    }
+    private void listenerForFullSizeImage()
+    {
+        fullSizeImage.setOnClickListener(new View.OnClickListener()
+        {
+            public void onClick(View v)
+            {
+                fullSizeImage.setVisibility(View.GONE);
+                myLayout.setVisibility(View.VISIBLE);
+            }
+        });
     }
 
     private void createMapOfImage()
@@ -74,14 +105,14 @@ public class MemoryActivity extends AppCompatActivity
     {
         ImageView imageView = new ImageView(this);
         imageView.setImageResource(R.drawable.ic);
-        TableRow.LayoutParams lp = new TableRow.LayoutParams(75,75);
+        TableRow.LayoutParams lp = new TableRow.LayoutParams(75, 75);
         lp.weight = 1;
         playInMemory(imageView, uriPath);
         tableRow.addView(imageView, lp);
         return imageView;
     }
 
-    private void playInMemory(ImageView imageView, String uriPath)
+    private void playInMemory(ImageView imageView, final String uriPath)
     {
         final MemoryImageView miv = new MemoryImageView(imageView, uriPath, mapOfImage.get(uriPath));
         miv.setOnClickProgress(true);
@@ -98,6 +129,9 @@ public class MemoryActivity extends AppCompatActivity
                         miv.setOnClickProgress(false);
                         if(miv == miv.getMiv())
                         {
+                            fullSizeImage.setImageURI(Uri.parse(uriPath));
+                            myLayout.setVisibility(View.GONE);
+                            fullSizeImage.setVisibility(View.VISIBLE);
                             miv.setOnClickProgress(true);
                         }
                         else

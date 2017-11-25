@@ -37,11 +37,12 @@ public class MainActivity extends AppCompatActivity
         final Button newGameButton = (Button) findViewById(R.id.newGame);
         final Button resetPhotosButton = (Button) findViewById(R.id.reset);
         mReaderDbHelper = new FeedReaderDbHelper(this);
+        setListenerForQuit();
         newGameButton.setOnClickListener(new View.OnClickListener()
         {
             public void onClick(View v)
             {
-                EditText numberOfPhotos = createEditTextView("Ilosc zdjec (min. " + MIN_PHOTOS + " max. " + MAX_PHOTOS + "): ");
+                EditText numberOfPhotos = createEditTextView("Ilosc zdjec (min. " + MIN_PHOTOS + " max. " + MAX_PHOTOS + ") musi byc parzysta: ");
                 newGameButton.setVisibility(View.GONE);
                 commitOnEditorActionListener(numberOfPhotos);
             }
@@ -67,7 +68,17 @@ public class MainActivity extends AppCompatActivity
             }
         });
     }
-
+    private void setListenerForQuit() {
+        Button quit = (Button) findViewById(R.id.quit);
+        quit.setOnClickListener(new View.OnClickListener()
+        {
+            public void onClick(View v)
+            {
+                finish();
+                System.exit(0);
+            }
+        });
+    }
     private void commitOnEditorActionListener(EditText numberOfPhotos)
     {
         numberOfPhotos.setOnEditorActionListener(new TextView.OnEditorActionListener()
@@ -76,7 +87,7 @@ public class MainActivity extends AppCompatActivity
             {
                 photosNumber = Integer.parseInt(textView.getText().toString());
                 photosTaked = mReaderDbHelper.getData().size();
-                if(photosNumber >= MIN_PHOTOS && photosNumber <= MAX_PHOTOS)
+                if(photosNumber >= MIN_PHOTOS && photosNumber <= MAX_PHOTOS && photosNumber%2==0)
                 {
                     if(photosNumber <= photosTaked)
                     {
