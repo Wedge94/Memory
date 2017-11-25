@@ -45,14 +45,14 @@ public class MemoryActivity extends AppCompatActivity
         mReaderDbHelper = new FeedReaderDbHelper(this);
         myLayout = (TableLayout) findViewById(R.id.tableLayout);
         int numberOfPhotos = getIntent().getIntExtra("number", -1) / 2;
-        toastMessage(Integer.toString(numberOfPhotos));
         createMapOfImage();
         score = 0;
         scoreView = (TextView) findViewById(R.id.scoreView);
         fullSizeImage = (ImageView) findViewById(R.id.FullScreenImage);
         listenerForFullSizeImage();
         List<String> randomImage = new ArrayList<>();
-        for(int i=0; i<mReaderDbHelper.getData().size(); i++)
+        for(int i = mReaderDbHelper.getData().size() - numberOfPhotos * 2;
+            i < mReaderDbHelper.getData().size(); i++)
         {
             randomImage.add(mReaderDbHelper.getData().get(i).toString());
             randomImage.add(mReaderDbHelper.getData().get(i).toString());
