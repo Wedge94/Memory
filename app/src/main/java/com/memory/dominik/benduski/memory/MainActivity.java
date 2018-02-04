@@ -53,13 +53,7 @@ public class MainActivity extends AppCompatActivity
             {
                 if(mReaderDbHelper.getData().size() > 0)
                 {
-                    for(int i = 0; i < mReaderDbHelper.getData().size(); i++)
-                    {
-                        File file = new File(mReaderDbHelper.getData().get(i).toString());
-                        file.delete();
-                    }
-                    mReaderDbHelper.deleteData();
-                    toastMessage("Usunieto zdjecia i baze danych!");
+                    deleteDataBase();
                 }
                 else
                 {
@@ -68,6 +62,18 @@ public class MainActivity extends AppCompatActivity
             }
         });
     }
+
+    private void deleteDataBase()
+    {
+        for(int i = 0; i < mReaderDbHelper.getData().size(); i++)
+        {
+            File file = new File(mReaderDbHelper.getData().get(i).toString());
+            file.delete();
+        }
+        mReaderDbHelper.deleteData();
+        toastMessage("Usunieto zdjecia i baze danych!");
+    }
+
     private void setListenerForQuit() {
         Button quit = (Button) findViewById(R.id.quit);
         quit.setOnClickListener(new View.OnClickListener()
@@ -89,17 +95,7 @@ public class MainActivity extends AppCompatActivity
                 photosTaked = mReaderDbHelper.getData().size();
                 if(photosNumber >= MIN_PHOTOS && photosNumber <= MAX_PHOTOS && photosNumber%2==0)
                 {
-                    if(photosNumber <= photosTaked)
-                    {
-                        startGame();
-                    }
-                    else
-                    {
-                        for(int j = photosTaked; j < photosNumber; j++)
-                        {
-                            dispatchTakePictureIntent();
-                        }
-                    }
+                    checkGameStart(photosNumber, photosTaked);
                 }
                 else
                 {
@@ -108,6 +104,21 @@ public class MainActivity extends AppCompatActivity
                 return false;
             }
         });
+    }
+
+    private void checkGameStart(int photosNumber, int photosTaked)
+    {
+        if(photosNumber <= photosTaked)
+        {
+            startGame();
+        }
+        else
+        {
+            for(int j = photosTaked; j < photosNumber; j++)
+            {
+                dispatchTakePictureIntent();
+            }
+        }
     }
 
     private EditText createEditTextView(String text)

@@ -5,10 +5,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.WindowManager;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -20,7 +16,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.Stack;
 
 
 /**
@@ -122,70 +117,90 @@ public class MemoryActivity extends AppCompatActivity
         {
             public void onClick(View v)
             {
-                if(miv.getOnClickProgress())
-                {
-                    if(miv.getClick())
-                    {
-                        miv.setOnClickProgress(false);
-                        if(miv == miv.getMiv())
-                        {
-                            fullSizeImage.setImageURI(Uri.parse(uriPath));
-                            myLayout.setVisibility(View.GONE);
-                            fullSizeImage.setVisibility(View.VISIBLE);
-                            miv.setOnClickProgress(true);
-                        }
-                        else
-                        {
-                            if(miv.getId() == miv.getMiv().getId())
-                            {
-                                miv.setOnImage();
-                                Runnable mMyRunnable = new Runnable()
-                                {
-                                    @Override
-                                    public void run()
-                                    {
-                                        score += 2;
-                                        scoreView.setText("Score: " + Integer.toString(score));
-                                        miv.setInvisible();
-                                        miv.getMiv().setInvisible();
-                                        miv.setClick(false);
-                                        miv.setOnClickProgress(true);
-                                    }
-                                };
-                                Handler myHandler = new Handler();
-                                myHandler.postDelayed(mMyRunnable, TIME);
-
-                            }
-                            else
-                            {
-                                miv.setOnImage();
-                                Runnable mMyRunnable = new Runnable()
-                                {
-                                    @Override
-                                    public void run()
-                                    {
-                                        score--;
-                                        scoreView.setText("Score: " + Integer.toString(score));
-                                        miv.setOnMark();
-                                        miv.getMiv().setOnMark();
-                                        miv.setClick(false);
-                                        miv.setOnClickProgress(true);
-                                    }
-                                };
-                                Handler myHandler = new Handler();
-                                myHandler.postDelayed(mMyRunnable, TIME);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        miv.setClick(true);
-                        miv.setMiv(miv);
-                        miv.setOnImage();
-                    }
-                }
+                gameProgress(miv, uriPath);
             }
         });
+    }
+
+    private void gameProgress(final MemoryImageView miv, String uriPath)
+    {
+        if(miv.getOnClickProgress())
+        {
+            clickOnPicture(miv, uriPath);
+        }
+    }
+
+    private void clickOnPicture(final MemoryImageView miv, String uriPath)
+    {
+        if(miv.getClick())
+        {
+            miv.setOnClickProgress(false);
+            comparePicture(miv, uriPath);
+        }
+        else
+        {
+            miv.setClick(true);
+            miv.setMiv(miv);
+            miv.setOnImage();
+        }
+    }
+
+    private void comparePicture(final MemoryImageView miv, String uriPath)
+    {
+        if(miv == miv.getMiv())
+        {
+            fullSizeImage.setImageURI(Uri.parse(uriPath));
+            myLayout.setVisibility(View.GONE);
+            fullSizeImage.setVisibility(View.VISIBLE);
+            miv.setOnClickProgress(true);
+        }
+        else
+        {
+            ratePlayer(miv);
+        }
+    }
+
+    private void ratePlayer(final MemoryImageView miv)
+    {
+        if(miv.getId() == miv.getMiv().getId())
+        {
+            miv.setOnImage();
+            Runnable mMyRunnable = new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    score += 2;
+                    scoreView.setText("Score: " + Integer.toString(score));
+                    miv.setInvisible();
+                    miv.getMiv().setInvisible();
+                    miv.setClick(false);
+                    miv.setOnClickProgress(true);
+                }
+            };
+            Handler myHandler = new Handler();
+            myHandler.postDelayed(mMyRunnable, TIME);
+
+        }
+        else
+        {
+            miv.setOnImage();
+            Runnable mMyRunnable = new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    score--;
+                    scoreView.setText("Score: " + Integer.toString(score));
+                    miv.setOnMark();
+                    miv.getMiv().setOnMark();
+                    miv.setClick(false);
+                    miv.setOnClickProgress(true);
+                }
+            };
+            Handler myHandler = new Handler();
+            myHandler.postDelayed(mMyRunnable, TIME);
+        }
     }
 
     private void toastMessage(String message)
